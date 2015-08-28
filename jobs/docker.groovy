@@ -3,16 +3,16 @@ folder("docker")
 
 def images = ["jenkins-slave", "bind9", "docker-proxy"]
 
-images.each {
+images.each { image ->
 
-  job("docker/${it}") {
+  job("docker/${image}") {
 
     wrappers {
         sshAgent('github')
     }
 
     scm {
-      github("slushpupie/docker-${it}",null,"ssh")
+      github("slushpupie/docker-${image}",null,"ssh")
     }
 
     triggers {
@@ -21,8 +21,8 @@ images.each {
 
     steps {
       shell("""
-        docker build -t slushpupie/${it} -t localhost:6000/slushpupie/${it} ${it}
-        docker push localhost:6000/slushpupie/${it}
+        docker build -t slushpupie/${image} -t localhost:6000/slushpupie/${image} ${image}
+        docker push localhost:6000/slushpupie/${image}
       """)
     }
   }
