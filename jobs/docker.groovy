@@ -6,8 +6,13 @@ def images = ["jenkins-slave", "bind9", "docker-proxy"]
 images.each {
 
   job("docker/${it}") {
+
+    wrappers {
+        sshAgent('github')
+    }
+
     scm {
-      github("slushpupie/docker-${it}")
+      github("slushpupie/docker-${it}",null,"ssh")
     }
 
     triggers {
