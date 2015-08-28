@@ -6,7 +6,7 @@ job("docker/jenkins-slave") {
     github("slushpupie/docker-jenkins-slave","ssh")
   }
 
-  trigger{
+  triggers {
     githubPush()
   }
 
@@ -18,3 +18,8 @@ job("docker/jenkins-slave") {
   }
 
 }
+
+job("docker/bind9") {
+  scm { 
+    github("slushpupie/docker-bind9","ssh")
+  }
