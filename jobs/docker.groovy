@@ -7,7 +7,7 @@ images.each {
 
   job("docker/${it}") {
     scm {
-      github("slushpupie/docker-${it}","ssh")
+      github("slushpupie/docker-${it}",null,"ssh")
     }
 
     triggers {
