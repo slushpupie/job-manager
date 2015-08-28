@@ -5,7 +5,7 @@ def images = ["jenkins-slave", "bind9", "docker-proxy"]
 
 images.each {
 
-  job("docker/jenkins-slave") {
+  job("docker/${it}") {
     scm {
       github("slushpupie/docker-${it}","ssh")
     }
