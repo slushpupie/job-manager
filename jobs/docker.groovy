@@ -21,7 +21,7 @@ images.each { image ->
 
     steps {
       shell("""
-        docker build -t slushpupie/${image} -t localhost:6000/slushpupie/${image} ${image}
+        docker build -t slushpupie/${image} -t localhost:6000/slushpupie/${image} .
         docker push localhost:6000/slushpupie/${image}
       """)
     }
