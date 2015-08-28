@@ -10,6 +10,7 @@ images.each { image ->
     wrappers {
         sshAgent('github')
     }
+    label("walnut")
 
     scm {
       github("slushpupie/docker-${image}",null,"ssh")
