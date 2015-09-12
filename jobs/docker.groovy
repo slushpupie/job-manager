@@ -29,3 +29,23 @@ images.each { image ->
   }
 }
 
+job("docker/update") {
+  
+    wrappers {
+       sshAgent('github')
+    }
+    label("walnut")
+
+    triggers { 
+      scm("0 H * * *")
+    }
+
+    steps {
+        images.each { image ->
+          shell("""
+            docker pull ${image}
+          """)
+        }
+    }
+}
+
