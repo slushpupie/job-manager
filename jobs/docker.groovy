@@ -26,6 +26,10 @@ images.each { image ->
         docker push localhost:6000/slushpupie/${image}
       """)
     }
+
+    publishers{
+      mailer('jay@slushpupie.com', true, true)
+    }
   }
 }
 
@@ -46,6 +50,10 @@ job("docker/update") {
             docker pull ${image}
           """)
         }
+    }
+
+    publishers{
+      mailer('jay@slushpupie.com', true, true)
     }
 }
 
