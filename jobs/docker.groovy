@@ -41,7 +41,7 @@ job("docker/update") {
     }
 
     steps {
-        images.each { image ->
+        ["jenkins", "ubuntu", "nginx", "elasticsearch", "logstash", "kibana", "larsks/crashplan", "evarga/jenkins-slave", "mhimmer/dropbox", "sameersbn/squid", "bind9"].each { image ->
           shell("""
             docker pull ${image}
           """)
