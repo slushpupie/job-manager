@@ -4,6 +4,15 @@ configurations {
     libs
 }
 
+repositories {
+    maven {
+      url "https://repo1.maven.org/maven2/"
+    }
+    maven {
+      url "http://maven.jenkins-ci.org/content/repositories/releases/"
+    }
+}
+
 dependencies {
     libs 'org.kohsuke:github-api:1.70'
 }
