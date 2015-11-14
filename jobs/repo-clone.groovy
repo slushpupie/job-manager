@@ -1,4 +1,4 @@
-
+import org.kohsuke.github.*
 
 def jobParent = this
 
