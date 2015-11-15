@@ -44,8 +44,18 @@ repos.each { repo ->
 
     destOrg.listTeams().each { team ->
       println team.getName()
+  
+    found = false 
+    destOrg.listRepositories(100).each { r ->
+      if (r.getName() == repo.repo) {
+        found = true
+        break
+      }
     }
-    ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
+
+    if (!found) {
+        ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
+    }
 
     job(jobName) {
       description """
