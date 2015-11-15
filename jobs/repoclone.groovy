@@ -76,11 +76,6 @@ repos.each { repo ->
             url(repo.repo)
             credentials('github')
           }
-          remote{
-            name('origin')
-            url(ghrepo.getSshUrl())
-            credentials('github')
-          }
           branches(branch)
           localBranch(branch)
         }
@@ -89,6 +84,7 @@ repos.each { repo ->
       steps {
         shell("""\
           #!/bin/bash -lx
+          git remote add origin ${ghrepo.getSshUrl()}
           git push -u origin ${branch}
         """.stripIndent().trim())
       }
