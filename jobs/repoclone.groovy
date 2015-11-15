@@ -45,7 +45,7 @@ repos.each { repo ->
     destOrg.listTeams().each { team ->
       println team.getName()
     }
-    ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, null, true)
+    ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
 
     job(jobName) {
       description """
