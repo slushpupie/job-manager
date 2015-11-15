@@ -43,9 +43,11 @@ repos.each { repo ->
     }
 
     found = false 
+    ghrepo = null
     destOrg.listRepositories(100).find { r ->
       println "repo: ${r.getName()}"
       if (r.getName() == repo.name) {
+        ghrepo = r
         println "match!" 
         found = true
         return true
