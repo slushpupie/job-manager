@@ -42,7 +42,7 @@ repos.each { repo ->
       jobName = "${parent_dir}autoclone/${repo.name}-tag-${branch.substring(5)}"
     }
 
-    ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", "", "", true)
+    ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, null, true)
 
     job(jobName) {
       description """
