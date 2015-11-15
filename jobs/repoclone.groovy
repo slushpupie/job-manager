@@ -44,7 +44,9 @@ repos.each { repo ->
 
     found = false 
     destOrg.listRepositories(100).find { r ->
+      println "repo: ${r.getName()}"
       if (r.getName() == repo.repo) {
+        println "match!" 
         found = true
         return true
       }
@@ -52,6 +54,7 @@ repos.each { repo ->
     }
 
     if (!found) {
+        println "Creating ${repo.repo}"
         ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
     }
 
