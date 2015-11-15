@@ -10,7 +10,6 @@ DESCRIPTION_FOOTER = """
 parent_dir = ''
 
 String apiKey = "${GHE_TOKEN}"
-String apiUser = "${GHE_USER}"
 String apiUrl = "https://api.github.com/"
 String dest = "autoclone"
 
