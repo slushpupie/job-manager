@@ -42,9 +42,6 @@ repos.each { repo ->
       jobName = "${parent_dir}autoclone/${repo.name}-tag-${branch.substring(5)}"
     }
 
-    destOrg.listTeams().each { team ->
-      println team.getName()
-  
     found = false 
     destOrg.listRepositories(100).each { r ->
       if (r.getName() == repo.repo) {
