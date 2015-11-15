@@ -65,16 +65,21 @@ repos.each { repo ->
         Clone ${repo.name} from ${repo.repo} to ${dest}/${repo.name}
       """.stripIndent().trim() + DESCRIPTION_FOOTER
 
+      wrappers {
+        sshAgent 'github'
+      }
 
       scm {
         git {
           remote{
             name('upstream')
             url(repo.repo)
+            credentials('github')
           }
           remote{
             name('origin')
             url(ghrepo.getSshUrl())
+            credentials('github')
           }
           branches(branch)
           localBranch(branch)
