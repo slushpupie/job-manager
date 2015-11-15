@@ -43,11 +43,12 @@ repos.each { repo ->
     }
 
     found = false 
-    destOrg.listRepositories(100).each { r ->
+    destOrg.listRepositories(100).find { r ->
       if (r.getName() == repo.repo) {
         found = true
-        break
+        return true
       }
+      return false
     }
 
     if (!found) {
