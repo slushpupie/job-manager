@@ -18,7 +18,8 @@ destOrg = github.getOrganization(dest)
 
 repos = [
 //[ repo: remoteRepo, ref: remoteRef, dst: localDest ]
-  [ name: 'lvm', repo: 'git@github.com:chef-cookbooks/lvm.git', tags: ['v1.3.7','v1.3.6'] ],
+  [ name: 'lvm', repo: 'git@github.com:chef-cookbooks/lvm.git' ]
+  [ name: 'lvm', dest: 'lvm2', repo: 'git@github.com:chef-cookbooks/lvm.git' ]
   [ name: 'windows', repo: 'git@github.com:chef-cookbooks/windows.git'],
 ]
 
@@ -28,6 +29,8 @@ folder("${parent_dir}autoclone")
 repos.each { repo ->
   branches = repo.get('branches',['master'])
   tags = repo.get('tags',[])
+  dest = repo.get('dest',repo.name)
+
   tags.each { tag ->
     if (branches.size == 1 && branches[0] == 'master') {
       branches = [ "tags/${tag}" ]
@@ -39,6 +42,7 @@ repos.each { repo ->
   branches.each { branch ->
     jobName = "${parent_dir}autoclone/${repo.name}-branch-${branch}"
     if (branch.startsWith('tags/')) {
+
       jobName = "${parent_dir}autoclone/${repo.name}-tag-${branch.substring(5)}"
     }
 
@@ -72,20 +76,22 @@ repos.each { repo ->
       scm {
         git {
           remote{
-            name('upstream')
             url(repo.repo)
             credentials('github')
           }
-          branches(branch)
-          localBranch(branch)
+          relativeTargetDir('ignored')
         }
       }
 
       steps {
         shell("""\
           #!/bin/bash -lx
+          rm -rf ignored
+          git clone ${repo.repo} ${repo.name}
+          cd ${repo.name}
           git remote add origin ${ghrepo.getSshUrl()}
-          git push -u origin ${branch}
+          git push --all -u origin 
+          git push --tags -u origin 
         """.stripIndent().trim())
       }
     }
