@@ -18,8 +18,8 @@ destOrg = github.getOrganization(dest)
 
 repos = [
 //[ repo: remoteRepo, ref: remoteRef, dst: localDest ]
-  [ name: 'lvm', repo: 'git@github.com:chef-cookbooks/lvm.git' ]
-  [ name: 'lvm', dest: 'lvm2', repo: 'git@github.com:chef-cookbooks/lvm.git' ]
+  [ name: 'lvm', repo: 'git@github.com:chef-cookbooks/lvm.git' ],
+  [ name: 'lvm', dest: 'lvm2', repo: 'git@github.com:chef-cookbooks/lvm.git' ],
   [ name: 'windows', repo: 'git@github.com:chef-cookbooks/windows.git'],
 ]
 
