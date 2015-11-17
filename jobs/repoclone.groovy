@@ -30,62 +30,61 @@ folder("${parent_dir}autoclone")
 repos.each { repo ->
   dest = repo.get('dest',repo.name)
 
-  branches.each { branch ->
-    jobName = "${parent_dir}autoclone/${repo.name}"
+  
+ jobName = "${parent_dir}autoclone/${repo.name}"
 
-    found = false 
-    ghrepo = null
-    destOrg.listRepositories(100).find { r ->
-      println "repo: ${r.getName()}"
-      if (r.getName() == repo.name) {
-        ghrepo = r
-        println "match!" 
-        found = true
-        return true
-      }
-      return false
+  found = false 
+  ghrepo = null
+  destOrg.listRepositories(100).find { r ->
+    println "repo: ${r.getName()}"
+    if (r.getName() == repo.name) {
+      ghrepo = r
+      println "match!" 
+      found = true
+      return true
     }
+    return false
+  }
 
-    if (!found) {
-        println "Creating ${repo.name}"
-        ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
+  if (!found) {
+      println "Creating ${repo.name}"
+      ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
+  }
+
+  job(jobName) {
+    description """
+      Clone ${repo.name} from ${repo.repo} to ${dest}/${repo.name}
+    """.stripIndent().trim() + DESCRIPTION_FOOTER
+
+    triggers { 
+      // Uses hashes, so not all jobs run at the same time
+      scm('@daily')      
     }
-
-    job(jobName) {
-      description """
-        Clone ${repo.name} from ${repo.repo} to ${dest}/${repo.name}
-      """.stripIndent().trim() + DESCRIPTION_FOOTER
-
-      triggers { 
-        // Uses hashes, so not all jobs run at the same time
-        scm('@daily')      
-      }
  
-      wrappers {
-        sshAgent 'github'
-      }
+    wrappers {
+      sshAgent 'github'
+    }
 
-      scm {
-        git {
-          remote{
-            url(repo.repo)
-            credentials('github')
-          }
-          relativeTargetDir('ignored')
+    scm {
+      git {
+        remote{
+          url(repo.repo)
+          credentials('github')
         }
+        relativeTargetDir('ignored')
       }
+    }
 
-      steps {
-        shell("""\
-          #!/bin/bash -lx
-          rm -rf ignored
-          git clone ${repo.repo} ${repo.name}
-          cd ${repo.name}
-          git remote add origin ${ghrepo.getSshUrl()}
-          git push --all -u origin 
-          git push --tags -u origin 
-        """.stripIndent().trim())
-      }
+    steps {
+      shell("""\
+        #!/bin/bash -lx
+        rm -rf ignored
+        git clone ${repo.repo} ${repo.name}
+        cd ${repo.name}
+        git remote add origin ${ghrepo.getSshUrl()}
+        git push --all -u origin 
+        git push --tags -u origin 
+      """.stripIndent().trim())
     }
   }
 }
