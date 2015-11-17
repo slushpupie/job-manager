@@ -81,6 +81,9 @@ repos.each { repo ->
         rm -rf ignored
         git clone ${repo.repo} ${repo.name}
         cd ${repo.name}
+        for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
+          git branch --track ${branch##*/} $branch
+        done
         git remote add dest ${ghrepo.getSshUrl()}
         git push --all -u dest
         git push --tags -u dest
