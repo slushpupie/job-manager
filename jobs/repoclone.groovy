@@ -81,9 +81,9 @@ repos.each { repo ->
         rm -rf ignored
         git clone ${repo.repo} ${repo.name}
         cd ${repo.name}
-        git remote add origin ${ghrepo.getSshUrl()}
-        git push --all -u origin 
-        git push --tags -u origin 
+        git remote add dest ${ghrepo.getSshUrl()}
+        git push --all -u dest
+        git push --tags -u dest
       """.stripIndent().trim())
     }
   }
