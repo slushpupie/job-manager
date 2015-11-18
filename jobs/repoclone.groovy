@@ -31,7 +31,7 @@ repos = [
   [ name: 'iptables', repo: 'git@github.com:chef-cookbooks/iptables.git'],
   [ name: 'rsyslog', repo: 'git@github.com:chef-cookbooks/rsyslog.git', refspec: '+refs/heads/master:refs/heads/master' ],
   [ name: 'logwatch', repo: 'git@github.com:chef-cookbooks/logwatch.git', update: false, cred: 'e79c6312-fd9b-4c60-98d7-82618cc4d2b0'],
-  [ name: 'httpd', repo: 'git@github.com:chef-cookbooks/httpd.git', update: false, refspec: ['+refs/tags/v0.3.0:refs/heads/master',
+  [ name: 'httpd', repo: 'git@github.com:chef-cookbooks/httpd.git', update: false, refspec: ['v0.3.0~0:refs/heads/master',
                                                                                              '+refs/tags/v0.3.0:refs/tags/v0.3.0' ,
                                                                                              '+refs/tags/v0.2.19:refs/tags/v0.2.19' ]],
 ]
