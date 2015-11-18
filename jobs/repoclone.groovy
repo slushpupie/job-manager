@@ -69,7 +69,7 @@ repos.each { repo ->
 
   if (!found) {
       println "Creating ${repo.dest}"
-      ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
+      ghrepo = destOrg.createRepository(repo.dest, "Cloned from $repo.repo", null, "owners", true)
   }
 
   job(jobName) {
