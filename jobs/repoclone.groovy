@@ -104,9 +104,9 @@ repos.each { repo ->
     }
 
     steps {
-      pushCmd = "git push --all origin\ngit push --tags origin"
+      pushCmd = "git push --all origin\ngit push --tags origin\n"
       if (repo.refspec) {
-        puschCmd = ""
+        pushCmd = ""
         repo.refspec.each { ref ->
           pushCmd += "git push origin ${ref}\n"
         }
