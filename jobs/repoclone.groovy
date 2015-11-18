@@ -7,36 +7,52 @@ DESCRIPTION_FOOTER = """
     See the job manager.
 """.stripIndent()
 
-parent_dir = ''
+baseFolder = 'autoclone'
 
-String apiKey = "${GHE_TOKEN}"
-String apiUrl = "https://api.github.com/"
-String dest = "autoclone"
 
-GitHub github = GitHub.connectToEnterprise(apiUrl,apiKey)
-destOrg = github.getOrganization(dest)
+apiKey = "${GHE_TOKEN}"
+apiUrl = "https://api.github.com/"
+dest = "autoclone"
+defaultCred = 'github' // Credentials Plugin id for remote/upstream
+localCred = 'github' // Credentials Plugin id for local/repo
+
 
 repos = [
 //[ name: 'foo',     // name of the repo and the job
 //  repo: 'git@foo', // Source repo; assume Jenkins has creds to get there
+//  refspec: '+refs/heads/master:refs/remotes/origin/master', // optional: A collection of respecs to push. Defaults to all branches and tags
+//  cred: 'foo',     // optional: Credential to use instad of the default
 //  dest: 'newfoo',  // optional: repo name at new location. Defaults to $name
 //  update: true ],  // optional: auto update. Defaults to true
   [ name: 'lvm', repo: 'git@github.com:chef-cookbooks/lvm.git' ],
   [ name: 'lvm', dest: 'lvm2', repo: 'git@github.com:chef-cookbooks/lvm.git' ],
   [ name: 'windows', repo: 'git@github.com:chef-cookbooks/windows.git'],
   [ name: 'jenkins', dest: 'jenkins-cookbook', repo: 'git@github.com:chef-cookbooks/jenkins.git'],
-  [ name: 'iptables', repo: 'git@github.com:chef-cookbooks/jenkins.git'],
-  [ name: 'logwatch', repo: 'git@github.com:chef-cookbooks/logwatch.git', update: false],
+  [ name: 'iptables', repo: 'git@github.com:chef-cookbooks/iptables.git'],
+  [ name: 'rsyslog', repo: 'git@github.com:chef-cookbooks/rsyslog.git', refspec: '+refs/heads/master:refs/heads/master' ],
+  [ name: 'logwatch', repo: 'git@github.com:chef-cookbooks/logwatch.git', update: false, cred: 'e79c6312-fd9b-4c60-98d7-82618cc4d2b0'],
+  [ name: 'httpd', repo: 'git@github.com:chef-cookbooks/httpd.git', update: false, refspec: ['+refs/tags/v0.3.0:refs/heads/master',
+                                                                                             '+refs/tags/v0.3.0:refs/tags/v0.3.0' ,
+                                                                                             '+refs/tags/v0.2.19:refs/tags/v0.2.19' ]],
 ]
 
 
-folder("${parent_dir}autoclone")
+GitHub github = GitHub.connectToEnterprise(apiUrl,apiKey)
+destOrg = github.getOrganization(dest)
+
+boolean isCollectionOrArray(object) {    
+  [Collection, Object[]].any { it.isAssignableFrom(object.getClass()) }
+}
+
+
+folder("${baseFolder}")
 
 repos.each { repo ->
   dest = repo.get('dest',repo.name)
   update = repo.get('update',true)
+  cred = repo.get('cred',defaultCred)
   
- jobName = "${parent_dir}autoclone/${repo.name}"
+ jobName = "${baseFolder}/${repo.name}"
 
   found = false 
   ghrepo = null
@@ -70,31 +86,41 @@ repos.each { repo ->
     }
  
     wrappers {
-      sshAgent 'github'
+      if (localCred) {
+        sshAgent localCred
+      }
     }
 
     scm {
       git {
         remote{
           url(repo.repo)
-          credentials('github')
+          if (cred) {
+            credentials(cred)
+          }
         }
         relativeTargetDir('ignored')
       }
     }
 
     steps {
+      if (repo.refs) {
+        repo.refs.each { ref ->
+          pushCmd += "git push ${ref}\n"
+        }
+      } else {
+        pushCmd = "git push --all origin\ngit push --tags origin"
+      }
       shell("""\
         #!/bin/bash -lx
         rm -rf ignored
-        git clone ${repo.repo} ${repo.name}
+        git clone --origin upstream ${repo.repo} ${repo.name}
         cd ${repo.name}
         for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do
           git branch --track \${branch##*/} \$branch
         done
-        git remote add dest ${ghrepo.getSshUrl()}
-        git push --all -u dest
-        git push --tags -u dest
+        git remote add origin ${ghrepo.getSshUrl()}
+        ${pushCmd}
       """.stripIndent().trim())
     }
   }
