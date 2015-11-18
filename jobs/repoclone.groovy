@@ -58,7 +58,7 @@ repos.each { repo ->
   ghrepo = null
   destOrg.listRepositories(100).find { r ->
     println "repo: ${r.getName()}"
-    if (r.getName() == repo.name) {
+    if (r.getName() == repo.dest) {
       ghrepo = r
       println "match!" 
       found = true
@@ -68,7 +68,7 @@ repos.each { repo ->
   }
 
   if (!found) {
-      println "Creating ${repo.name}"
+      println "Creating ${repo.dest}"
       ghrepo = destOrg.createRepository(repo.name, "Cloned from $repo.repo", null, "owners", true)
   }
 
@@ -108,7 +108,7 @@ repos.each { repo ->
       if (repo.refspec) {
         puschCmd = ""
         repo.refspec.each { ref ->
-          pushCmd += "git push ${ref}\n"
+          pushCmd += "git push origin ${ref}\n"
         }
       }
       shell("""\
