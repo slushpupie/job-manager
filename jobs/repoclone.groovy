@@ -17,11 +17,16 @@ GitHub github = GitHub.connectToEnterprise(apiUrl,apiKey)
 destOrg = github.getOrganization(dest)
 
 repos = [
+//[ name: 'foo',     // name of the repo and the job
+//  repo: 'git@foo', // Source repo; assume Jenkins has creds to get there
+//  dest: 'newfoo',  // optional: repo name at new location. Defaults to $name
+//  update: true ],  // optional: auto update. Defaults to true
   [ name: 'lvm', repo: 'git@github.com:chef-cookbooks/lvm.git' ],
   [ name: 'lvm', dest: 'lvm2', repo: 'git@github.com:chef-cookbooks/lvm.git' ],
   [ name: 'windows', repo: 'git@github.com:chef-cookbooks/windows.git'],
   [ name: 'jenkins', dest: 'jenkins-cookbook', repo: 'git@github.com:chef-cookbooks/jenkins.git'],
-  [ name: 'iptables',  repo: 'git@github.com:chef-cookbooks/jenkins.git'],
+  [ name: 'iptables', repo: 'git@github.com:chef-cookbooks/jenkins.git'],
+  [ name: 'logwatch', repo: 'git@github.com:chef-cookbooks/logwatch.git', update: false],
 ]
 
 
@@ -29,7 +34,7 @@ folder("${parent_dir}autoclone")
 
 repos.each { repo ->
   dest = repo.get('dest',repo.name)
-
+  update = repo.get('update',true)
   
  jobName = "${parent_dir}autoclone/${repo.name}"
 
@@ -56,9 +61,12 @@ repos.each { repo ->
       Clone ${repo.name} from ${repo.repo} to ${dest}/${repo.name}
     """.stripIndent().trim() + DESCRIPTION_FOOTER
 
-    triggers { 
-      // Uses hashes, so not all jobs run at the same time
-      scm('@daily')      
+
+    if (update) {
+      triggers { 
+        // Uses hashes, so not all jobs run at the same time
+        scm('@daily')      
+      }
     }
  
     wrappers {
