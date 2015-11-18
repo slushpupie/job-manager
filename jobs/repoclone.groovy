@@ -104,12 +104,12 @@ repos.each { repo ->
     }
 
     steps {
-      if (repo.refs) {
-        repo.refs.each { ref ->
+      pushCmd = "git push --all origin\ngit push --tags origin"
+      if (repo.refspec) {
+        puschCmd = ""
+        repo.refspec.each { ref ->
           pushCmd += "git push ${ref}\n"
         }
-      } else {
-        pushCmd = "git push --all origin\ngit push --tags origin"
       }
       shell("""\
         #!/bin/bash -lx
