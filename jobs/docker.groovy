@@ -1,7 +1,7 @@
 
 folder("docker")
 
-def images = ["jenkins-slave", "bind9", "docker-proxy"]
+def images = ["jenkins-slave", "bind9", "docker-proxy", "artifactory"]
 
 images.each { image ->
 
