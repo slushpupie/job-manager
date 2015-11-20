@@ -17,7 +17,7 @@ images.each { image ->
     }
 
     triggers {
-      scm("H * * * *")
+      githubPush()
     }
 
     steps {
