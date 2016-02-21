@@ -14,6 +14,7 @@ images.each { image ->
 
     scm {
       github("slushpupie/docker-${image}",null,"ssh")
+      credentials('github')
     }
 
     triggers {
@@ -41,7 +42,7 @@ job("docker/update") {
     label("walnut")
 
     triggers { 
-      scm("0 H * * *")
+      cron("0 H * * *")
     }
 
     steps {
