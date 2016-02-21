@@ -13,8 +13,12 @@ images.each { image ->
     label("walnut")
 
     scm {
-      github("slushpupie/docker-${image}",null,"ssh")
-      credentials('github')
+      git {
+        remote {
+          github("slushpupie/docker-${image}","ssh")
+          credentials('github')
+        }
+      }
     }
 
     triggers {
