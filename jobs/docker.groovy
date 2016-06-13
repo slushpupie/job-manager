@@ -38,30 +38,43 @@ images.each { image ->
   }
 }
 
-job("docker/update") {
-  
-    wrappers {
-       sshAgent('github')
-    }
-    label("walnut")
 
-    triggers { 
-      cron("0 H * * *")
-    }
+folder('docker/updates')
 
-    steps {
-        ["jenkins", "ubuntu", "nginx", "elasticsearch", "logstash", "kibana", 
-         "larsks/crashplan", "evarga/jenkins-slave", "mhimmer/dropbox", 
-         "sameersbn/squid", "andyshinn/dnsmasq", "progrium/consul", "cgswong/vault",
-         "tomcat:7-jre7"].each { image ->
-          shell("""
-            docker pull ${image}
-          """)
-        }
-    }
+["jenkins", "ubuntu", "nginx", "elasticsearch", "logstash", "kibana",
+ "larsks/crashplan", "evarga/jenkins-slave", "mhimmer/dropbox",
+ "sameersbn/squid", "andyshinn/dnsmasq", "progrium/consul", "cgswong/vault",
+ "tomcat:7-jre7", "jenkinsci/jenkins"].each { image ->
 
-    publishers{
-      mailer('jay@slushpupie.com', true, true)
-    }
+   imagename = image
+   parts = image.split('/')
+   if (parts.length == 1) {
+     repo = 'library'
+     jobname = "docker/updates/${imagename}"
+   } else if (parts.length == 2) {
+     repo = parts[0]
+     imagename = parts[1]
+     jobname = "docker/updates/${repo}-${imagename}"
+   }
+   trigger_url = "https://index.docker.io/v1/repositories/${repo}/${imagename}/tags"
+   job(jobname) {
+     label("walnut")
+     triggers {
+       urlTrigger {
+         cron("H * * * *")
+         url(trigger_url) {
+           inspection('change')
+           timeout(4000)
+         }
+       }
+     }
+     steps {
+       shell("""
+         docker pull ${image}
+      """)
+     }
+     publishers{
+       mailer('jay@slushpupie.com', true, true)
+     }
+   }
 }
-
