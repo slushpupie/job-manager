@@ -50,9 +50,9 @@ folder('docker/updates')
    parts = image.split('/')
    if (parts.length == 1) {
      repo = 'library'
-     jobname = "docker/updates/${imagename}"
      parts2 = imagename.split(':')
      imagename = parts2[0]
+     jobname = "docker/updates/${imagename}"
    } else if (parts.length == 2) {
      repo = parts[0]
      imagename = parts[1]
