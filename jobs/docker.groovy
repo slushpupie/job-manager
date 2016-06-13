@@ -44,18 +44,23 @@ folder('docker/updates')
 ["jenkins", "ubuntu", "nginx", "elasticsearch", "logstash", "kibana",
  "larsks/crashplan", "evarga/jenkins-slave", "mhimmer/dropbox",
  "sameersbn/squid", "andyshinn/dnsmasq", "progrium/consul", "cgswong/vault",
- "tomcat:7-jre7", "jenkinsci/jenkins"].each { image ->
+ "tomcat:7-jre7", "tomcat:7-jre8","jenkinsci/jenkins"].each { image ->
 
    imagename = image
    parts = image.split('/')
    if (parts.length == 1) {
      repo = 'library'
      jobname = "docker/updates/${imagename}"
+     parts2 = imagename.split(':')
+     imagename = parts2[0]
    } else if (parts.length == 2) {
      repo = parts[0]
      imagename = parts[1]
+     parts2 = imagename.split(':')
+     imagename = parts2[0]
      jobname = "docker/updates/${repo}-${imagename}"
    }
+
    trigger_url = "https://index.docker.io/v1/repositories/${repo}/${imagename}/tags"
    job(jobname) {
      label("walnut")
